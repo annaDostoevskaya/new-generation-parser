@@ -20,7 +20,7 @@ def  setup_firefox(headless_mode=True):
     return options
 
 def wait_load_page(driver):
-    sleep(5)
+    sleep(7)
 
 def load_cookies(driver):
     cookies = json.load( open(os.environ["PATHTOCOOKIES"]) )
@@ -39,7 +39,7 @@ def main():
     log(">Start")
 
     log(">Init and setup Firefox")
-    driver = webdriver.Firefox(options=setup_firefox(headless_mode=True))
+    driver = webdriver.Firefox(options=setup_firefox(headless_mode=False))
 
     log(">Load cookie-files")
     load_cookies(driver)
