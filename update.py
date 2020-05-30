@@ -52,5 +52,5 @@ log(">Finish")
 
 while(1):
     sleep(0.5)
-    test.out_html(test.driver)
+    out_html(driver)
 
