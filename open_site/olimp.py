@@ -1,4 +1,5 @@
 import configparser
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
@@ -56,19 +57,7 @@ def main(argv):
     return url
     
 
-def get_koefs(url, exodus, koef):
-    soup = get_page(url)
-    table_of_koefs = soup.findAll('table', 
-            {'class' : 'koeftable2'})[0]
-    exodus_and_koefs = table_of_koefs.findAll('nobr')
-
-    return exodus_and_koefs
-
-
-
-if __name__ == '__main__':
-    #url = main(sys.argv[1:])
-    # test in windows
+def get_profile_firefox():
     if platform.system() == 'Windows':
         mozilla_profile = os.path.join(os.getenv('APPDATA'), r'Mozilla\Firefox')
         mozilla_profile_ini = os.path.join(mozilla_profile, r'profiles.ini')
@@ -85,13 +74,35 @@ if __name__ == '__main__':
         with open(mozilla_profile_ini, "r") as ini_file:
             profile_config.read_file(ini_file)
         path_to_profile = mozilla_profile+profile_config.get('Profile0', 'Path')
-
-
+    
     profile = webdriver.FirefoxProfile(path_to_profile)
-    driver = webdriver.Firefox(profile)
+
+    return profile
+
+
+def get_id_koefs(soup, outcome, koef):
+    table_of_outcomes_koefs = soup.findAll('table', 
+            {'class' : 'koeftable2'})[0]
+    nobrs = table_of_outcomes_koefs.findAll('nobr')
     
-    url = main(["Футбол", "Беларусь. Высшая лига. Статистика", 
-        "УГЛ Рух Брест"])
+    for nobr in nobrs:
+        if(outcome in nobr.text and
+                koef in nobr.text):
+            koef_outcome_nobr = nobr
+    
+    span_koef = koef_outcome_nobr.findAll('span')[2]
+    id = span_koef.get('id')
+
+    return id
+
+
+
+
+if __name__ == '__main__':
+    driver = webdriver.Firefox(get_profile_firefox())
+    url = main(['Футбол', 'Англия. Премьер-лига', 'Астон'])
     driver.get(url)
-    id_koef = get_id_koef(url, koef, exodus)
-    
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    id_koef = get_id_koefs(soup, 'П1', '3.11')
+    coupon = driver.find_element_by_id(id_koef)
+    coupon.click()
