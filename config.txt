@@ -1,0 +1,7 @@
+export PATHTOSITE="https://www.allbestbets.com/arbs/"
+export PATHTOCOOKIES="$VIRTUAL_ENV/etc/cookies-allbestbets.json"
+export PATHTOPROFILEFIREFOX="/home/kristina/.mozilla/firefox/0oi60hj8.default-release/"
+
+pip install selenium==3.141.0
+pip install beautifulsoup4==4.9.1 
+pip install requests==2.23.0 
