@@ -45,7 +45,7 @@ def get_teams(link_to_country_and_league, teams):
         if(teams in link.text):
             return link.get('href')
 
-def main(argv):
+def get_url(argv):
     link_to_sport = get_sport(argv[0])
     assert check(link_to_sport) == 0
     link_to_league = get_country_and_league(link_to_sport, argv[1])
@@ -96,13 +96,38 @@ def get_id_koefs(soup, outcome, koef):
     return id
 
 
+def login(driver, login, password):
+    try:
+        flogin =  driver.find_element_by_xpath('.//*[@class="enter-block \
+clearfix"]/form/div/input[1]')
+        fpassword =  driver.find_element_by_xpath('.//*[@class="enter-block \
+clearfix"]/form/div/input[2]')
+    except:
+        return
 
+    flogin.click()
+    flogin.send_keys(login)
+    fpassword.click()
+    fpassword.send_keys(password)
+    submit =  driver.find_element_by_xpath('.//*[@class="enter-block \
+clearfix"]/form/div/button')
+    submit.click()
+    return
+
+def input_sum(driver, sum):
+    coupon_input = driver.find_element_by_class_name('sumwin')
+    coupon_input.click()
+    coupon_input.send_keys(sum)
+    return
+    
 
 if __name__ == '__main__':
     driver = webdriver.Firefox(get_profile_firefox())
-    url = main(['Футбол', 'Англия. Премьер-лига', 'Астон'])
+    url = get_url(['Футбол', 'Англия. Премьер-лига', 'Манчестер Сити'])
     driver.get(url)
+    login(driver, '77715747960', '2003.05.18.tra')
     soup = BeautifulSoup(driver.page_source, 'html.parser')
-    id_koef = get_id_koefs(soup, 'П1', '3.11')
+    id_koef = get_id_koefs(soup, 'Манчестер Сити (1.5) мен', '3.26')
     coupon = driver.find_element_by_id(id_koef)
     coupon.click()
+    input_sum(driver, '10000')
